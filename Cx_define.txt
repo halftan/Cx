@@ -1,0 +1,36 @@
+CX语言文法定义
+一、	惯用的词法
+1、	下面是语言的关键字包括： int bool if else while write read，所有的关键字都是保留字，并且必须是小写
+2、	专用符号：+ - * / < <= > >= == != = || && ！ ; ( ) { } /* */
+3、	其他标记：
+标识符:字母打头，后接字母或数字，识别出的标识符用ID标记，区分大小写字母
+无符号整数:由数字组成，用NUM标记
+<ID>∷=<letter>|<ID><letter>|<ID><digit>
+<NUM>∷=<digit>|<NUM><digit>
+<letter>∷= a|b|…|z|A|B|…|Z
+<digit>∷=1|2|…|9|0
+4、	空格由空白、换行符和制表符组成。空格分开ID、NUM关键字
+5、	注释用/*….*/括起，可以放在任何空白出现的位置，可以超过一行，注释不能嵌套
+二、语法和语义
+1)	<program> ∷= <block>
+2)	<block> ∷= {<decls> <stmts>}
+3)	<decls> ∷=<decls> <decl> | ε
+4)	<decl> ∷= int <aid>; | bool <bid>;
+5)	<aid> ∷= <ID>
+6)	<bid> ∷= <ID>
+7)	<stmts> ∷= <stmts> <stmt> | ε
+8)	<stmt> ∷= <aid> = <aexpr>; | <bid> = <bexpr>; | if (<bexpr>) <stmt>; |  if (<bexpr>) <stmt> else <stmt>; | while (<bexpr>) <stmt>; | write <aexpr>; | read <aid>; |  <block>
+9)	<aexpr> ∷= <aterm> + <aterm> | <aterm> - <aterm> | <aterm>
+10)	<aterm> ∷= <afactor> * <afactor> | <afactor> / <afactor> | <afactor>
+11)	<afactor> ∷= <aid> | NUM | (<aexpr>)
+12)	<bexpr> ∷= <bexpr> || <bterm> | <bterm>
+13)	<bterm> ∷= <bterm> && <bfactor> | <bfactor>
+14)	<bfactor> ∷= <bid> | true | false | ! <bfactor> | (<bexpr>) | <rel>
+15)	<rel> ∷= <aexpr> < <aexpr> | <aexpr> <= <aexpr> | <aexpr> > <aexpr> | <aexpr> >= <aexpr> | <aexpr> == <aexpr> | <aexpr> != <aexpr>
+
+注意：规则2)中的符号“{”” 、“}”为终结符号，不是元符号，规则8)、11)、14)中出现的符号“(”和“)”也是终结符号，不是元符号
+
+关于语义有几点说明：
+1、	变量应该先声明后使用。变量声明的作用域是最近的{}，如果和上一层{}中的变量重名，则覆盖之
+2、	If语句存在悬挂else二义性，使用“最近嵌套”非二义性规则解决：else部分作为当前if的一个子结构立即分析
+3、	符号/表示整数除，任何余数都被截去
